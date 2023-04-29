@@ -8,7 +8,7 @@ export default new DataSource({
   username: 'test',
   password: 'password',
   entities: ['dist/**/entities/**/*.entity.js'],
-  migrations: ['dist/**/migrations/**/*.js'],
+  migrations: ['dist/**/migration/**/*.js'],
 
   // ログを出力するかどうか
   logging: true,

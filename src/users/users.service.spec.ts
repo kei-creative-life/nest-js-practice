@@ -8,6 +8,7 @@ import { UsersService } from './users.service';
 
 describe('UsersService', () => {
   let service: UsersService;
+
   beforeEach(async () => {
     // テスト用のモジュールを作成する
     const module: TestingModule = await Test.createTestingModule({
@@ -23,6 +24,33 @@ describe('UsersService', () => {
 
     // テスト用のモジュールから、UsersServiceを取得する
     service = module.get<UsersService>(UsersService);
+  });
+
+  describe('findAll()', () => {
+    it('should successfully get all users', () => {
+      const users: User[] = [
+        { id: 1, name: 'Taro' },
+        { id: 2, name: 'Jiro' },
+      ];
+
+      jest.spyOn(service, 'findAll').mockImplementation(async () => {
+        return users;
+      });
+
+      expect(service.findAll()).resolves.toEqual(users);
+    });
+  });
+
+  describe('findOne()', () => {
+    it('should successfully get one user', () => {
+      const user: User = { id: 1, name: 'Taro' };
+
+      jest.spyOn(service, 'findOne').mockImplementation(async () => {
+        return user;
+      });
+
+      expect(service.findOne(1)).resolves.toEqual(user);
+    });
   });
 
   describe('create()', () => {

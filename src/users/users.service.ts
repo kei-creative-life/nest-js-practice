@@ -3,7 +3,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Repository, DeleteResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/users.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -14,18 +14,6 @@ export class UsersService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
-
-  async create({ name }: CreateUserDto): Promise<User> {
-    return await this.userRepository
-      .save({
-        name: name,
-      })
-      .catch((e) => {
-        throw new InternalServerErrorException(
-          `[${e.message}]：ユーザーの登録に失敗しました。`,
-        );
-      });
-  }
 
   async findAll(): Promise<User[]> {
     return await this.userRepository.find().catch((e) => {
@@ -46,11 +34,35 @@ export class UsersService {
       });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async create({ name }: CreateUserDto): Promise<User> {
+    return await this.userRepository
+      .save({
+        name: name,
+      })
+      .catch((e) => {
+        throw new InternalServerErrorException(
+          `[${e.message}]：ユーザーの登録に失敗しました。`,
+        );
+      });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id: id } });
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    user.name = updateUserDto.name;
+    return await this.userRepository.save(user);
+  }
+
+  async remove(id: number): Promise<DeleteResult> {
+    const user = await this.userRepository.findOne({ where: { id: id } });
+
+    if (!user) {
+      throw new NotFoundException();
+    }
+
+    return await this.userRepository.delete(user);
   }
 }

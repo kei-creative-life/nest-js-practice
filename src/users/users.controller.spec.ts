@@ -77,4 +77,52 @@ describe('UsersController', () => {
       });
     });
   });
+
+  describe('update()', () => {
+    it('should successfully update one user', () => {
+      const user = { id: 1, name: '二郎' };
+
+      jest.spyOn(service, 'update').mockImplementation(async () => {
+        return user;
+      });
+
+      expect(service.update(1, { name: '二郎' })).resolves.toEqual(user);
+    });
+
+    it('should fail to update', () => {
+      jest.spyOn(service, 'update').mockRejectedValue({
+        statusCode: 404,
+        message: 'Not Found',
+      });
+
+      expect(service.update(2, { name: '二郎' })).rejects.toEqual({
+        statusCode: 404,
+        message: 'Not Found',
+      });
+    });
+  });
+
+  describe('remove()', () => {
+    it('should successfully delete one user', () => {
+      const user = { raw: [], affected: 1 };
+
+      jest.spyOn(service, 'remove').mockImplementation(async () => {
+        return user;
+      });
+
+      expect(service.remove(1)).resolves.toEqual(user);
+    });
+
+    it('should fail to delete', () => {
+      jest.spyOn(service, 'remove').mockRejectedValue({
+        statusCode: 404,
+        message: 'Not Found',
+      });
+
+      expect(service.remove(2)).rejects.toEqual({
+        statusCode: 404,
+        message: 'Not Found',
+      });
+    });
+  });
 });

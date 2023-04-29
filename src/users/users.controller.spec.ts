@@ -28,6 +28,33 @@ describe('UsersController', () => {
     service = module.get<UsersService>(UsersService);
   });
 
+  describe('findAll()', () => {
+    it('should get all users', () => {
+      const users: User[] = [
+        { id: 1, name: 'Taro' },
+        { id: 2, name: 'Jiro' },
+      ];
+
+      jest.spyOn(service, 'findAll').mockImplementation(async () => {
+        return users;
+      });
+
+      expect(controller.findAll()).resolves.toEqual(users);
+    });
+  });
+
+  describe('findOne()', () => {
+    it('should successfully get one user', () => {
+      const user: User = { id: 1, name: 'Taro' };
+
+      jest.spyOn(service, 'findOne').mockImplementation(async () => {
+        return user;
+      });
+
+      expect(service.findOne(1)).resolves.toEqual(user);
+    });
+  });
+
   describe('create()', () => {
     it('should create a user', () => {
       const dto: CreateUserDto = {
